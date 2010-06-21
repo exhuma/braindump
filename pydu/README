@@ -1,0 +1,4 @@
+A simple "disk usage" script with a visually more attractive/useful display
+than the standard "du" utility.
+
+It's slow, but gives you what you want.
