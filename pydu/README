@@ -1,4 +1,7 @@
 A simple "disk usage" script with a visually more attractive/useful display
 than the standard "du" utility.
 
-It's slow, but gives you what you want.
+Use "pydu.py --help" to see how it works. But it should be straight-forward
+
+LICENSE: LGPL
+
