@@ -11,6 +11,10 @@ from os.path import join, getsize, isfile, islink, isdir, exists, abspath
 from optparse import OptionParser
 
 TERM = None
+# ignore "virtual" filesystems
+VIRTUAL_FS_TYPES = ["sysfs", "fusectl", "debugfs", "securityfs", "devtmpfs",
+      "devpts", "tmpfs", "proc", "binfmt_misc", "fuse.gvfs-fuse-daemon",
+      "fuse.truecrypt"]
 
 ## {{{ http://code.activestate.com/recipes/475116/ (r3)
 import sys, re
@@ -228,8 +232,8 @@ def get_first_level_sizes( path, options ):
       if islink(entry_path) and not options.follow_symlinks:
          continue
 
-      # ignore "virtual" mounts
-      if entry_mp['device'] == 'none' and not options.include_virtual:
+      # ignore "virtual" filesystems
+      if entry_mp['type'] in VIRTUAL_FS_TYPES and not options.include_virtual:
          continue
 
       du, errors = disk_usage( join(path, entry), verbose=options.verbose )
