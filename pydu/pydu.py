@@ -218,7 +218,8 @@ def get_first_level_sizes( path, options ):
    mounts = get_mounts()
    root_mp = get_mountpoint( path, mounts )
 
-   print "Calculating ..."
+   if not options.quiet:
+      print TERM.YELLOW + "Calculating ..." + TERM.NORMAL
    output = []
    for entry in os.listdir(path):
       entry_path = join(path,entry)
@@ -226,14 +227,23 @@ def get_first_level_sizes( path, options ):
 
       # ignore files on different mountpoints (if enabled)
       if entry_mp['mountpoint'] != root_mp['mountpoint'] and options.one_fs:
+         if not options.quiet:
+            print "%sIgnoring different FS %r%s" % (TERM.YELLOW, entry_path,
+                  TERM.NORMAL)
          continue
 
       # ignore symbolic links unless forced
       if islink(entry_path) and not options.follow_symlinks:
+         if not options.quiet:
+            print "%sIgnoring symlink %r%s" % (TERM.YELLOW, entry_path,
+                  TERM.NORMAL)
          continue
 
       # ignore "virtual" filesystems
       if entry_mp['type'] in VIRTUAL_FS_TYPES and not options.include_virtual:
+         if not options.quiet:
+            print "%sIgnoring virtual FS on %r%s" % (TERM.YELLOW, entry_path,
+                  TERM.NORMAL)
          continue
 
       du, errors = disk_usage( join(path, entry), verbose=options.verbose )
@@ -337,7 +347,7 @@ def get_mounts():
    return output
 
 def get_options():
-   usage  = "usage: %prog [options] <folder>"
+   usage  = "usage: %prog [options] <folder>\nhelp: %prog --help"
    parser = OptionParser(usage=usage)
    parser.add_option( "-f", "--follow-symlinks", dest="follow_symlinks",
          help="Include symlinks in the report. By default, this is disabled.",
@@ -347,6 +357,13 @@ def get_options():
          "which are mounted on other file systems. For example, if you "      \
          "report on '/' and '/home' is on a different fs, this option will "  \
          "prevent it being reported. By default, this is disabled",
+         default=False,
+         action="store_true" )
+   parser.add_option( "-q", "--quiet", dest="quiet", help="Suppress all "     \
+         "informational messages except the final report. This is in "        \
+         "contrast with '--verbose' which will enable 'debug' messages. "     \
+         "While 'debug' messages can often be safely ignored, the default "   \
+         "'informational' messages may still be interesting.",
          default=False,
          action="store_true" )
    parser.add_option( "-x", "--include-virtual", dest="include_virtual",
@@ -359,6 +376,9 @@ def get_options():
          help="Print verbose output. Default is OFF",
          default=False,
          action="store_true")
+   parser.description = ("Determines the size on disk for each entry in the "
+      "specified folder. It ignores symlinks and virtual file systems. "
+      "Optionally, you can restrict the report on one filesystem/device.")
    options, args = parser.parse_args()
    if not args:
       parser.print_usage()
@@ -385,6 +405,7 @@ if __name__ == "__main__":
 
    pretty_print( get_first_level_sizes( args[0], options ) )
 
-   if not options.verbose:
-      print "NOTE: Enabling the verbose flag will print errors '(err: xxx)' to stderr"
+   if not options.verbose and not options.quiet:
+      print TERM.YELLOW + "NOTE: Enabling the verbose flag will print " \
+            "errors '(err: xxx)' to stderr" + TERM.NORMAL
 
