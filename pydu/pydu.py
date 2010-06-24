@@ -245,15 +245,11 @@ def pretty_print( results ):
    if not results:
       return
 
+   # determine console width
    console_width = TERM.COLS or 80
 
-   # determine the maximum length of folder names
-   name_len = max([ len(x[0]) for x in results ])
-   do_truncate = False
-   if name_len > 40:
-      print "WARNING: filename length exceeded maximum width. Truncating!"
-      do_truncate = True
-      name_len = 40
+   # minimum progress bar length
+   bar_len_min = 5
 
    # the width for the size number
    size_len = 10
@@ -266,6 +262,16 @@ def pretty_print( results ):
 
    # the width of the "errors" text
    error_len = 9
+
+   # determine the maximum length of folder names
+   name_len = max([ len(x[0]) for x in results ])
+   name_len_max = console_width - bar_len_min - size_len - error_len - whitespace_len
+
+   do_truncate = False
+   if name_len > name_len_max:
+      sys.stderr.write( "WARNING: filename length exceeded maximum width. Truncating!\n" )
+      do_truncate = True
+      name_len = name_len_max
 
    # remaining console width is filled with the progress bar
    bar_len = console_width - name_len - size_len - error_len - whitespace_len
@@ -282,7 +288,7 @@ def pretty_print( results ):
    for root, size, errors in sorted_results:
       pb_char_count = int(float(size) / max_size * bar_len)
       progress_bar = pb_char_count * "#"
-      print line_template % (do_truncate and root[0:40] or root,
+      print line_template % (do_truncate and root[0:name_len_max] or root,
             human_readable(size),
             progress_bar,
             errors)
