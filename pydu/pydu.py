@@ -1,3 +1,4 @@
+#!/usr/bin/python
 """
 List disk usage sizes
 
