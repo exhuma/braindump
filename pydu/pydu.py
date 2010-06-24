@@ -7,7 +7,7 @@ Based on the example shown in the python documentation of "os.walk"
 
 import os
 import sys
-from os.path import join, getsize, isfile, islink, exists
+from os.path import join, getsize, isfile, islink, exists, abspath
 from optparse import OptionParser
 
 TERM = None
@@ -178,10 +178,11 @@ def human_readable( size ):
 def disk_usage( path, ignored_dirs=[], verbose=False ):
    size = 0
    errors = 0
+   path = abspath(path)
 
    if isfile( path ):
       try:
-         return getsize( path )
+         return getsize( path ), 0
       except OSError, e:
          errors += 1
          if verbose:
@@ -209,6 +210,7 @@ def get_first_level_sizes( path, options ):
    """
    Determine the size for each folder and file in <path>
    """
+   path = abspath( path )
    mounts = get_mounts()
    root_mp = get_mountpoint( path, mounts )
 
@@ -361,6 +363,7 @@ def get_mountpoint( path, mounts ):
    @param mounts: A dictionary containing mount information (retrieve it with
                   get_mounts)
    """
+   path = abspath(path)
    for mountpoint in mounts.keys():
       if path.startswith( mountpoint ):
          return mounts[mountpoint]
