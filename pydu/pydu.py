@@ -7,7 +7,7 @@ Based on the example shown in the python documentation of "os.walk"
 
 import os
 import sys
-from os.path import join, getsize, isfile, islink, exists, abspath
+from os.path import join, getsize, isfile, islink, isdir, exists, abspath
 from optparse import OptionParser
 
 TERM = None
@@ -282,7 +282,7 @@ def pretty_print( results ):
    sorted_results = sorted( results, cmp=lambda x, y: cmp(x[1], y[1]))
 
    # the string template for one line
-   line_template = "%%-%ds %%%ds [%%-%ds] (err: %%4d)" % (name_len, size_len, bar_len)
+   line_template = "%%s%%-%ds%%s %%%ds [%%-%ds] %%s(err: %%4d)%%s" % (name_len, size_len, bar_len)
 
    # for the progress bar
    max_size = sorted_results[-1][1]
@@ -290,10 +290,16 @@ def pretty_print( results ):
    for root, size, errors in sorted_results:
       pb_char_count = int(float(size) / max_size * bar_len)
       progress_bar = pb_char_count * "#"
-      print line_template % (do_truncate and root[0:name_len_max] or root,
+      print line_template % (
+            isdir(root) and TERM.BLUE or TERM.NORMAL,
+            do_truncate and root[0:name_len_max] or root,
+            TERM.NORMAL,
             human_readable(size),
             progress_bar,
-            errors)
+            errors and TERM.RED or TERM.NORMAL,
+            errors,
+            TERM.NORMAL
+            )
 
 def get_mounts():
    """
