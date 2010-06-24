@@ -6,7 +6,7 @@ Based on the example shown in the python documentation of "os.walk"
 
 import os
 import sys
-from os.path import join, getsize
+from os.path import join, getsize, isfile
 
 def human_readable( size ):
    """
@@ -23,6 +23,9 @@ def human_readable( size ):
 
 def disk_usage( path, ignored_dirs=[] ):
    size = 0
+   if isfile( path ):
+      return getsize( path )
+
    for root, dirs, files in os.walk( path ):
       for name in files:
          try:
@@ -87,7 +90,6 @@ def pretty_print( results, console_width=80 ):
       print line_template % (do_truncate and root[0:40] or root,
             human_readable(size),
             progress_bar)
-
 
 def usage():
    print """
