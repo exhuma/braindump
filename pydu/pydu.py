@@ -5,9 +5,18 @@ List disk usage sizes
 Based on the example shown in the python documentation of "os.walk"
 """
 
+import re
 import os
 import sys
-from os.path import join, getsize, isfile, islink, isdir, exists, abspath
+from os.path import (
+    join,
+    getsize,
+    isfile,
+    islink,
+    isdir,
+    exists,
+    abspath,
+    basename)
 from optparse import OptionParser
 
 TERM = None
@@ -17,7 +26,6 @@ VIRTUAL_FS_TYPES = ["sysfs", "fusectl", "debugfs", "securityfs", "devtmpfs",
       "fuse.truecrypt"]
 
 ## {{{ http://code.activestate.com/recipes/475116/ (r3)
-import sys, re
 
 class TerminalController:
     """
@@ -304,9 +312,10 @@ def pretty_print( results ):
    for root, size, errors in sorted_results:
       pb_char_count = int(float(size) / max_size * bar_len)
       progress_bar = pb_char_count * "#"
+      displayname = basename(root)
       print line_template % (
             isdir(root) and TERM.BLUE or TERM.NORMAL,
-            do_truncate and root[0:name_len_max] or root,
+            do_truncate and displayname[0:name_len_max] or displayname,
             TERM.NORMAL,
             human_readable(size),
             progress_bar,
