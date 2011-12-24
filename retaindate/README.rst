@@ -20,6 +20,26 @@ Example Usage::
         if not is_obsolete(date):
             print date
 
+More practical example (removing old backup files)::
+
+    from retaindate import is_obsolete
+    from os import listdir
+    from os.path import abspath, join
+    from datetime import datetime
+    from time import strptime
+    from subprocess import call
+    import sys
+
+    for line in listdir(sys.argv[1]):
+        try:
+            then = datetime(*strptime(line, '%Y-%m-%d')[0:6])
+            if is_obsolete(then):
+                path = join(abspath(sys.argv[1]), line)
+                print "removing %s" % path
+                call(['rm', '-rf', path])
+        except ValueError:
+            print >>sys.stderr, "Invalid date string: %r" % line
+
 See the module docs (or the source) for more details
 
 .. _strptime: http://docs.python.org/library/time.html#time.strptime
