@@ -1,3 +1,6 @@
 retaindate/dist
 retaindate/build
 retaindate/MANIFEST
+wpclassifier/dist
+wpclassifier/env
+wpclassifier/wpclassifier.egg-info
