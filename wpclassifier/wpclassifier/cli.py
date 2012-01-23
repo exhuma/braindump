@@ -2,7 +2,7 @@ import sys
 import logging
 from optparse import OptionParser
 
-from wpclassifier import move_files
+from wpclassifier import move_files, aspect_folder
 
 LOG = logging.getLogger(__name__)
 
@@ -20,8 +20,19 @@ def main():
             'folder name, use the aspect ration as folder name. For '
             'cross-platform compatibility, the generated names will use "@" '
             'instead of ":" as separator (f. ex.: 16@9) Default: not-set')
+    parser.add_option('-s', '--show-aspect', dest='show_aspect',
+            metavar='SIZE',
+            default=None, help='Show the target folder for a given resolution '
+            'and exit. For example: SIZE=1680x1050')
 
     (options, args) = parser.parse_args()
+
+    if options.show_aspect:
+        tw, th = options.show_aspect.split('x')
+        target = aspect_folder(int(tw), int(th))
+        print "Pictures of size %s will be moved into %s" % (
+                options.show_aspect, target)
+        sys.exit(0)
 
     if len(args) != 2:
         parser.print_help()

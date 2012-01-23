@@ -15,6 +15,12 @@ def get_image_size(filepath):
         LOG.error("Unable to open file %s (%s)" % (filepath, str(e)))
         return None
 
+def aspect_folder(width, height):
+    """
+    Given an image aspect ratio, return a folder name
+    """
+    return "%d@%d" % (width, height)
+
 def get_image_aspect(filepath):
     """
     Returns the image aspect ratio as a tuple of width/height. This simplifies
@@ -25,9 +31,8 @@ def get_image_aspect(filepath):
     size = get_image_size(filepath)
     if not size:
         return None
-    x, y = size
-    fract = Fraction(x, y)
-    return fract.numerator, fract.denominator
+    fract = Fraction(*size)
+    return fract
 
 def move_files(input_dir, output_dir, as_aspect=False, move=False):
     from os import listdir, makedirs
@@ -40,7 +45,7 @@ def move_files(input_dir, output_dir, as_aspect=False, move=False):
         if as_aspect:
             aspect = get_image_aspect(in_file)
             if aspect:
-                clazz = "%d@%d" % aspect
+                clazz = aspect_folder(*aspect)
         else:
             size = get_image_size(in_file)
             if size:
