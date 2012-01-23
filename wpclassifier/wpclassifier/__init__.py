@@ -15,24 +15,29 @@ def get_image_size(filepath):
         LOG.error("Unable to open file %s (%s)" % (filepath, str(e)))
         return None
 
+def simplify(numer, denom):
+    "Simplifies the fraction, returning a tuple"
+    fract = Fraction(numer, denom)
+    return fract.numerator, fract.denominator
+
 def aspect_folder(width, height):
     """
     Given an image aspect ratio, return a folder name
     """
+    width, height = simplify(width, height)
     return "%d@%d" % (width, height)
 
 def get_image_aspect(filepath):
     """
     Returns the image aspect ratio as a tuple of width/height. This simplifies
-    the rations as much as possible. Which may result in unexpected values.
+    the ratios as much as possible. Which may result in unexpected values.
     For example, instead of (16,10) it will return (8,5). But as this is the
     same value, you can use it as expected
     """
     size = get_image_size(filepath)
     if not size:
         return None
-    fract = Fraction(*size)
-    return fract
+    return simplify(*size)
 
 def move_files(input_dir, output_dir, as_aspect=False, move=False):
     from os import listdir, makedirs
