@@ -14,4 +14,4 @@ conventional ``:`` to stay compatible with windows.
 The images in the input folder will be moved into the corresponding folders.
 
 
-Run `wpclassifier --help` for the command-line help.
+Run ``wpclassifier --help`` for the command-line help.
