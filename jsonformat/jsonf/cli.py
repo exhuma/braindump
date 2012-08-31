@@ -4,11 +4,11 @@
 
 It's primary use is to pipe in the output of ``curl``. For example::
 
-   curl -H "Accept: application/json" -X GET http://url/ | python jsonf.py
+   curl -H "Accept: application/json" -X GET http://url/ | jsonf
 
 or, with headers::
 
-   curl -i -H "Accept: application/json" -X GET http://url/ | python jsonf.py
+   curl -i -H "Accept: application/json" -X GET http://url/ | jsonf
 
 Handling headers is *very* curl specific and not tested with any other source.
 Given that curl's output looks like a standard HTTP response, it should work
