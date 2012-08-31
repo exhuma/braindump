@@ -8,6 +8,7 @@ setup(
     description="Tiny tool to pretty print JSON documents on the console.",
     long_description=open("README.rst").read(),
     license="BSD",
+    url="https://github.com/exhuma/braindump/tree/master/jsonformat",
     include_package_data=True,
     install_requires=[
         "pygments"
