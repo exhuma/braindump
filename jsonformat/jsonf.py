@@ -14,8 +14,16 @@ Handling headers is *very* curl specific and not tested with any other source.
 Given that curl's output looks like a standard HTTP response, it should work
 with other tools too. YMMV.
 """
-from sys import stdin
+from sys import stdin, stderr
 import json
+
+try:
+    from pygments import highlight
+    from pygments.lexers import JSONLexer
+    from pygments.formatters import TerminalFormatter
+    PYGMENTS_AVAILABLE = True
+except ImportError:
+    PYGMENTS_AVAILABLE = False
 
 
 def format_json(data):
@@ -39,7 +47,14 @@ def main():
         content, headers = headers, content
 
     print ''.join(headers)
-    print format_json(''.join(content))
+    output = format_json(''.join(content))
+    if PYGMENTS_AVAILABLE:
+        print highlight(output, JSONLexer(), TerminalFormatter())
+    else:
+        print output
+        print >>stderr, ("NOTE: If you have the python package "
+                         "`pygments` available for import, you'll get nice "
+                         "syntax highlighting ^_^")
 
 
 if __name__ == '__main__':
