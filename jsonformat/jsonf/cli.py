@@ -21,9 +21,8 @@ try:
     from pygments import highlight
     from pygments.lexers import JSONLexer
     from pygments.formatters import TerminalFormatter
-    PYGMENTS_AVAILABLE = True
 except ImportError:
-    PYGMENTS_AVAILABLE = False
+    pass
 
 
 def format_json(data):
@@ -48,9 +47,9 @@ def main():
 
     print ''.join(headers)
     output = format_json(''.join(content))
-    if PYGMENTS_AVAILABLE:
+    try:
         print highlight(output, JSONLexer(), TerminalFormatter())
-    else:
+    except NameError:
         print output
         print >>stderr, ("NOTE: If you have the python package "
                          "`pygments` available for import, you'll get nice "
