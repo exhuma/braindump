@@ -51,9 +51,10 @@ There are three different naming options for target folders:
 --format=a
     This will store the images into folders which represent the images aspect
     ratio. Note that the aspect ratios will be aggressively reduced if
-    possible. So an aspect ratio of "16:10" will be saved to "8@5".
+    possible. So an aspect ratio of "16:10" will be reduced to "8:5".
     Additionally, while a proper display would be "16:9", the folder names
-    will be named "16@9" for compatibility with Windows.
+    will be named "16@9" for compatibility with Windows, as it does not allow
+    ``:`` in file names.
 
 --format=x
     This is the same as ``--format=a`` with the difference that the
