@@ -67,8 +67,8 @@ There are three different naming options for target folders:
     (options, args) = parser.parse_args()
 
     if options.target_for:
-        tw, th = options.target_for.split('x')
-        target = aspect_folder(int(tw), int(th), options.format)
+        width, height = options.target_for.split('x')
+        target = aspect_folder(int(width), int(height), options.format)
         print "Pictures of size %s will be moved into %s" % (
                 options.target_for, target)
         sys.exit(0)

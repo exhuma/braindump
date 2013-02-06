@@ -8,16 +8,18 @@ F_SIMPLE = 's'
 F_ASPECT = 'a'
 F_APPROX_ASPECT = 'x'
 
+
 def get_image_size(filepath):
     """
     Returns a 2-tuple of the image dimensions. For example: (1024, 768)
     """
     try:
-        im = Image.open(filepath)
-        return im.size
-    except Exception, e:
-        LOG.error("Unable to open file %s (%s)" % (filepath, str(e)))
+        img = Image.open(filepath)
+        return img.size
+    except Exception, exc:
+        LOG.error("Unable to open file %s (%s)" % (filepath, str(exc)))
         return None
+
 
 def simplify(numer, denom, approximate=False):
     """
@@ -37,6 +39,7 @@ def simplify(numer, denom, approximate=False):
         fract = tmp
     return fract.numerator, fract.denominator
 
+
 def aspect_folder(width, height, format_=F_SIMPLE):
     """
     Given an image aspect ratio, return a folder name.
@@ -50,6 +53,7 @@ def aspect_folder(width, height, format_=F_SIMPLE):
     width, height = simplify(width, height,
             format_ in (F_ASPECT, F_APPROX_ASPECT))
     return "%d@%d" % (width, height)
+
 
 def get_image_aspect(filepath, approximate=False):
     """
@@ -65,7 +69,8 @@ def get_image_aspect(filepath, approximate=False):
     size = get_image_size(filepath)
     if not size:
         return None
-    return simplify(*size, approximate=approximate)
+    return simplify(size[0], size[1], approximate=approximate)
+
 
 def move_files(input_dir, output_dir, format_=F_SIMPLE, move=False):
     """
@@ -108,7 +113,7 @@ def move_files(input_dir, output_dir, format_=F_SIMPLE, move=False):
             approximate = format_ == F_APPROX_ASPECT
             aspect = get_image_aspect(in_file, approximate)
             if aspect:
-                clazz = aspect_folder(*aspect, format_=format_)
+                clazz = aspect_folder(aspect[0], aspect[1], format_=format_)
         else:
             size = get_image_size(in_file)
             if size:
@@ -128,5 +133,5 @@ def move_files(input_dir, output_dir, format_=F_SIMPLE, move=False):
             operation(in_file, out_file)
             LOG.info("%s %s to %s" % (op_text, basename(in_file),
                 dirname(out_file)))
-        except Exception, e:
-            LOG.error(str(e))
+        except Exception, exc:
+            LOG.error(str(exc))
