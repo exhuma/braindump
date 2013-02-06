@@ -105,7 +105,7 @@ def move_files(input_dir, output_dir, format_=F_SIMPLE, move=False):
             approximate = format_ == F_APPROX_ASPECT
             aspect = get_image_aspect(in_file, approximate)
             if aspect:
-                clazz = aspect_folder(*aspect, approximate=approximate)
+                clazz = aspect_folder(*aspect, format_=format_)
         else:
             size = get_image_size(in_file)
             if size:
