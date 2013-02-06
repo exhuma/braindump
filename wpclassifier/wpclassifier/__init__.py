@@ -31,7 +31,10 @@ def simplify(numer, denom, approximate=False):
     """
     fract = Fraction(numer, denom)
     if approximate:
-        fract = fract.limit_denominator(10)
+        tmp = fract.limit_denominator(10)
+        if fract != tmp:
+            LOG.debug("{0} reduced to {1}".format(fract, tmp))
+        fract = tmp
     return fract.numerator, fract.denominator
 
 def aspect_folder(width, height, format_=F_SIMPLE):
