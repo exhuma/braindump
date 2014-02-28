@@ -1,8 +1,10 @@
 import sys
+from ipaddress import ip_network
 import timeit
 from ipaddress import collapse_addresses
 from merger import merge
-from testdata import testdata
+
+import cProfile
 
 
 def run_tests_v4():
@@ -20,29 +22,35 @@ def run_tests_v4():
         number=iterations) / iterations)
 
 
-def run_tests_v6():
+def gendata():
+    print('generating test-data with {} networks'.format(sys.argv[2]))
     from genpool import gen
-    from datetime import datetime
-    testdata = gen(int(sys.argv[1]))
+    testdata = gen(int(sys.argv[2]))
     with open("testdata.txt", "w") as fp:
-        fp.writelines([str(_) for _ in testdata])
-    print('collapsing {} IPv6 networks'.format(sys.argv[1]))
+        fp.writelines(['{}\n'.format(_) for _ in testdata])
 
-    before = datetime.now()
+
+def run_new():
+    testdata = [ip_network(_) for _ in open('testdata.txt').readlines()]
     result = merge(testdata)
-    done = datetime.now()
-    with open("new_result.txt", "w") as fp:
-        fp.writelines([str(_) for _ in result])
-    print('new collapsed to {} networks in {}'.format(
-        len(result), done - before))
 
-    before = datetime.now()
+
+def run_old():
+    testdata = [ip_network(_) for _ in open('testdata.txt').readlines()]
+    prof = cProfile.Profile()
+    prof.enable()
     result = collapse_addresses(testdata)
-    done = datetime.now()
+    prof.disable()
+    prof.dump_stats('old-algo.stats')
     resultlist = [str(_) for _ in result]
     with open("old_result.txt", "w") as fp:
-        fp.writelines(resultlist)
-    print('old collapsed to {} networks in {}'.format(
-        len(resultlist), done - before))
+        fp.write('\n'.join(resultlist))
 
-run_tests_v6()
+
+if __name__ == '__main__':
+    if sys.argv[1] == 'new':
+        run_new()
+    elif sys.argv[1] == 'old':
+        run_old()
+    elif sys.argv[1] == 'gendata':
+        gendata()
