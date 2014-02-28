@@ -39,7 +39,67 @@ def merge(networks):
 
         # Nothing can be done. Shift the current net on the stack.
         else:
-            output.append(bucket)
             output.append(net)
 
     return output
+
+
+
+from ipaddress import _BaseNetwork, _BaseAddress
+
+def collapse_addresses(addresses):
+    """Collapse a list of IP objects.
+
+    Example:
+        collapse_addresses([IPv4Network('192.0.2.0/25'),
+                            IPv4Network('192.0.2.128/25')]) ->
+                           [IPv4Network('192.0.2.0/24')]
+
+    Args:
+        addresses: An iterator of IPv4Network or IPv6Network objects.
+
+    Returns:
+        An iterator of the collapsed IPv(4|6)Network objects.
+
+    Raises:
+        TypeError: If passed a list of mixed version objects.
+
+    """
+    i = 0
+    addrs = []
+    ips = []
+    nets = []
+
+    # split IP addresses and networks
+    for ip in addresses:
+        if isinstance(ip, _BaseAddress):
+            if ips and ips[-1]._version != ip._version:
+                raise TypeError("%s and %s are not of the same version" % (
+                                 ip, ips[-1]))
+            ips.append(ip)
+        elif ip._prefixlen == ip._max_prefixlen:
+            if ips and ips[-1]._version != ip._version:
+                raise TypeError("%s and %s are not of the same version" % (
+                                 ip, ips[-1]))
+            try:
+                ips.append(ip.ip)
+            except AttributeError:
+                ips.append(ip.network_address)
+        else:
+            if nets and nets[-1]._version != ip._version:
+                raise TypeError("%s and %s are not of the same version" % (
+                                 ip, nets[-1]))
+            nets.append(ip)
+
+    # sort and dedup
+    ips = sorted(set(ips))
+    nets = sorted(set(nets))
+
+    while i < len(ips):
+        (first, last) = _find_address_range(ips[i:])
+        i = ips.index(last) + 1
+        addrs.extend(summarize_address_range(first, last))
+
+    return iter(merge(sorted(
+        addrs + nets, key=_BaseNetwork._get_networks_key)))
+
