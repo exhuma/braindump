@@ -7,9 +7,9 @@ def generate(base, **kwargs):
         if randint(0, 100) > 50:
             continue
 
-        if sub.prefixlen < 100 and randint(0, 100) < 50:
+        if sub.prefixlen < 80 and randint(0, 100) < 30:
             j = 0
-            for x in generate(sub, prefixlen_diff=randint(2, 8)):
+            for x in generate(sub, prefixlen_diff=randint(2, 48)):
                 yield x
                 j += 1
                 if j >= randint(0, 20):
@@ -20,7 +20,7 @@ def generate(base, **kwargs):
 
 def gen(num):
     base = ip_network('1234:1234::/30')
-    gen = generate(base, new_prefix=56)
+    gen = generate(base, new_prefix=48)
 
     i = 0
     out = []
