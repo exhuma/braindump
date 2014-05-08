@@ -14,6 +14,7 @@ Handling headers is *very* curl specific and not tested with any other source.
 Given that curl's output looks like a standard HTTP response, it should work
 with other tools too. YMMV.
 """
+from __future__ import print_function
 from sys import stdin, stderr
 import json
 
@@ -45,15 +46,16 @@ def main():
         # Let's exchange them.
         content, headers = headers, content
 
-    print ''.join(headers)
+    print(''.join(headers))
     output = format_json(''.join(content))
     try:
-        print highlight(output, JSONLexer(), TerminalFormatter())
+        print(highlight(output, JSONLexer(), TerminalFormatter()))
     except NameError:
-        print output
-        print >>stderr, ("NOTE: If you have the python package "
-                         "`pygments` available for import, you'll get nice "
-                         "syntax highlighting ^_^")
+        print(output)
+        print("NOTE: If you have the python package "
+              "`pygments` available for import, you'll get nice "
+              "syntax highlighting ^_^",
+              file=stderr)
 
 
 if __name__ == '__main__':
