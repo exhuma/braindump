@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 """
 *Very* simple tool to pretty-print JSON data.
 
