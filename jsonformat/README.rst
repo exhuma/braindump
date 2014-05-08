@@ -33,3 +33,17 @@ Installation from source
 - Install it::
 
         cd jsonf-1.0 && python setup.py install
+
+Usage examples
+--------------
+
+::
+
+        echo '{ "foo" : "lorem", "bar" : "ipsum" }' | jsonf
+
+Result::
+
+        {
+            "bar": "ipsum", 
+            "foo": "lorem"
+        }
