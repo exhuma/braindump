@@ -19,7 +19,7 @@ import json
 
 try:
     from pygments import highlight
-    from pygments.lexers import JSONLexer
+    from pygments.lexers import JsonLexer
     from pygments.formatters import TerminalFormatter
 except ImportError:
     pass
@@ -48,7 +48,7 @@ def main():
     print ''.join(headers)
     output = format_json(''.join(content))
     try:
-        print highlight(output, JSONLexer(), TerminalFormatter())
+        print highlight(output, JsonLexer(), TerminalFormatter())
     except NameError:
         print output
         print >>stderr, ("NOTE: If you have the python package "
